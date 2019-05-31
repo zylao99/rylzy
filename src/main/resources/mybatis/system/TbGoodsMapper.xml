@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.tbGoods.mapper.TbGoodsMapper">
+    
+    <resultMap type="TbGoods" id="TbGoodsResult">
+        <result property="goodsId"    column="goods_id"    />
+        <result property="name"    column="name"    />
+        <result property="intro"    column="intro"    />
+        <result property="price"    column="price"    />
+        <result property="num"    column="num"    />
+    </resultMap>
+	
+	<sql id="selectTbGoodsVo">
+        select goods_id, name, intro, price, num from tb_goods
+    </sql>
+	
+    <select id="selectTbGoodsList" parameterType="TbGoods" resultMap="TbGoodsResult">
+        <include refid="selectTbGoodsVo"/>
+        <where>  
+            <if test="goodsId != null "> and goods_id = #{goodsId}</if>
+             <if test="name != null  and name != '' "> and name = #{name}</if>
+             <if test="intro != null  and intro != '' "> and intro = #{intro}</if>
+             <if test="price != null "> and price = #{price}</if>
+             <if test="num != null "> and num = #{num}</if>
+         </where>
+    </select>
+    
+    <select id="selectTbGoodsById" parameterType="Long" resultMap="TbGoodsResult">
+        <include refid="selectTbGoodsVo"/>
+        where goods_id = #{goodsId}
+    </select>
+        
+    <insert id="insertTbGoods" parameterType="TbGoods" useGeneratedKeys="true" keyProperty="goodsId">
+        insert into tb_goods
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="name != null  and name != ''  ">name,</if>
+			<if test="intro != null  and intro != ''  ">intro,</if>
+			<if test="price != null  ">price,</if>
+			<if test="num != null  ">num,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="name != null  and name != ''  ">#{name},</if>
+			<if test="intro != null  and intro != ''  ">#{intro},</if>
+			<if test="price != null  ">#{price},</if>
+			<if test="num != null  ">#{num},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateTbGoods" parameterType="TbGoods">
+        update tb_goods
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''  ">name = #{name},</if>
+            <if test="intro != null  and intro != ''  ">intro = #{intro},</if>
+            <if test="price != null  ">price = #{price},</if>
+            <if test="num != null  ">num = #{num},</if>
+        </trim>
+        where goods_id = #{goodsId}
+    </update>
+
+	<delete id="deleteTbGoodsById" parameterType="Long">
+        delete from tb_goods where goods_id = #{goodsId}
+    </delete>
+	
+    <delete id="deleteTbGoodsByIds" parameterType="String">
+        delete from tb_goods where goods_id in 
+        <foreach item="goodsId" collection="array" open="(" separator="," close=")">
+            #{goodsId}
+        </foreach>
+    </delete>
+    
+</mapper>
